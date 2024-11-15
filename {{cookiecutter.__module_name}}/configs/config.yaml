@@ -1,0 +1,2 @@
+app_name: {{cookiecutter.project_name}} config
+app_version: 1.0.0

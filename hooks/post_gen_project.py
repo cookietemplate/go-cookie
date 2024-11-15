@@ -1,8 +1,13 @@
 import os
+import pathlib
+import json
 import shutil
 import subprocess
 
+import requests
+
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
+PROJECT_ROOT = pathlib.Path(PROJECT_DIRECTORY)
 
 LICENSES_DICT = {
     "Proprietary": None,
@@ -35,24 +40,6 @@ def download_license_from_github(license_name):
     return None
 
 
-def format_license(license_content):
-    """Format the license file"""
-    license_content = license_content.replace("[year]", "{% now 'local', '%Y' %}")
-    license_content = license_content.replace("[fullname]", "{{ cookiecutter.full_name }}")
-    license_content = license_content.replace("[email]", "{{ cookiecutter.email }}")
-    license_content = license_content.replace("[project]", "{{ cookiecutter.project_name }}")
-
-    # GPL 3-Clause License
-    license_content = license_content.replace("<year>", "{% now 'local', '%Y' %}")
-    license_content = license_content.replace("<name of author>", "{{ cookiecutter.full_name }}")
-    license_content = license_content.replace(
-        "<one line to give the program's name and a brief idea of what it does.>",
-        "{{ cookiecutter.project_short_description }}"
-    )
-
-    return license_content
-
-
 def write_license_file(license_name):
     """Write the license file to the project directory"""
     license_content = download_license_from_github(license_name)
@@ -60,20 +47,25 @@ def write_license_file(license_name):
         with open(os.path.join(PROJECT_DIRECTORY, 'LICENSE'), 'w') as f:
             f.write(license_content)
 
+def remove_folder(folder_path):
+    """Remove the folder"""
+    folder_path = PROJECT_ROOT / folder_path
+    if folder_path.exists():
+        shutil.rmtree(folder_path)
 
-def init_git_repo():
-    """Initialize the git repository"""
-    os.system("git init")
-    os.system("git add .")
-    os.system("git commit -m 'Initial commit'")
-
-def init_poetry():
-    """Initialize the poetry"""
-    os.system("poetry install")
+def init_go_modules():
+    """Initialize go modules"""
+    subprocess.run(["go", "mod", "tidy"], cwd=PROJECT_DIRECTORY)
 
 if __name__ == '__main__':
     if "{{ cookiecutter.open_source_license }}" != "Proprietary":
         write_license_file("{{ cookiecutter.open_source_license }}")
 
-    init_git_repo()
-    init_poetry()
+    if not {{cookiecutter.use_protoc}}:
+        remove_folder("api")
+        remove_folder("third_party")
+    
+    if "{{cookiecutter.ci}}" == "None":
+        remove_folder(".github")
+
+    init_go_modules()

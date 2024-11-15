@@ -1,14 +1,14 @@
 {
-    "project_name": "Untitled Project",
-    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
-    "full_name": "Your Name",
-    "email": "your@email.address",
-    "github_username": "your-name",
-    "version": "0.1.0",
+    "project_name": "",
+    "project_slug": "",
+    "__module_name": "{{ cookiecutter.project_slug.split('/')[-1] }}",
     "project_short_description": "",
+    "go_version": "1.23",
+    "use_protoc": false,
+    "use_wire": false,
     "open_source_license": [
-        "Apache-2.0",
         "Proprietary",
+        "Apache-2.0",
         "MIT",
         "BSD-2-Clause",
         "BSD-3-Clause",
@@ -22,5 +22,9 @@
         "LGPL-3.0-only",
         "LGPL-3.0-or-later",
         "ISC"
+    ],
+    "ci": [
+        "GitHub Actions",
+        "None"
     ]
 }
